@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebML Playground - Build Better Websites</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Main Content */
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Editor Panel */
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+        }
+
+        .panel-header {
+            padding: 1rem;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #webml-editor {
+            width: 100%;
+            height: 100%;
+            background: #1a1f36;
+            color: var(--text);
+            border: none;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #preview-frame {
+            flex: 1;
+            border: none;
+            background: white;
+        }
+
+        /* Examples Panel */
+        .examples-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 300px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .examples-panel.open {
+            transform: translateX(0);
+        }
+
+        .examples-list {
+            padding: 1rem;
+        }
+
+        .example-item {
+            padding: 1rem;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .example-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border-radius: 0.375rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background: var(--error);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            .editor-panel, .preview-panel {
+                flex: none;
+                height: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🚀</span>
+                <span>WebML Playground</span>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="runCode()">
+                    <span>▶️</span> Run
+                </button>
+                <button class="btn btn-secondary" onclick="showExamples()">
+                    <span>📚</span> Examples
+                </button>
+                <button class="btn btn-secondary" onclick="exportCode()">
+                    <span>💾</span> Export
+                </button>
+                <button class="btn btn-secondary" onclick="shareCode()">
+                    <span>🔗</span> Share
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Editor -->
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <div class="panel-title">WebML Code Editor</div>
+                    <div>
+                        <button class="btn btn-secondary" onclick="formatCode()">
+                            <span>✨</span> Format
+                        </button>
+                    </div>
+                </div>
+                <div class="editor-container">
+                    <textarea id="webml-editor" spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <div class="panel-title">Live Preview</div>
+                    <div class="status-item">
+                        <span id="compile-status">Ready</span>
+                    </div>
+                </div>
+                <iframe id="preview-frame"></iframe>
+            </div>
+
+            <!-- Examples Sidebar -->
+            <div class="examples-panel" id="examples-panel">
+                <div class="panel-header">
+                    <div class="panel-title">Code Examples</div>
+                    <button class="btn btn-secondary" onclick="hideExamples()">
+                        <span>✕</span>
+                    </button>
+                </div>
+                <div class="examples-list" id="examples-list">
+                    <!-- Examples will be loaded here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-item">
+                <span>WebML v1.0</span>
+            </div>
+            <div class="status-item">
+                <span id="line-count">Line 1, Column 1</span>
+            </div>
+        </footer>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // WebML Compiler
+        class WebMLCompiler {
+            constructor() {
+                this.components = new Map();
+                this.themes = {
+                    modern: this.modernTheme(),
+                    dark: this.darkTheme()
+                };
+            }
+
+            modernTheme() {
+                return {
+                    primary: '#3b82f6',
+                    secondary: '#64748b',
+                    success: '#10b981',
+                    background: '#ffffff',
+                    surface: '#f8fafc',
+                    text: '#1e293b'
+                };
+            }
+
+            darkTheme() {
+                return {
+                    primary: '#8b5cf6',
+                    secondary: '#94a3b8',
+                    success: '#10b981',
+                    background: '#0f172a',
+                    surface: '#1e293b',
+                    text: '#f8fafc'
+                };
+            }
+
+            compile(webmlCode) {
+                try {
+                    // Parse WebML code
+                    const ast = this.parse(webmlCode);
+                    
+                    // Generate HTML and CSS
+                    const html = this.generateHTML(ast);
+                    const css = this.generateCSS(ast);
+                    
+                    return { html, css, error: null };
+                } catch (error) {
+                    return { html: '', css: '', error: error.message };
+                }
+            }
+
+            parse(code) {
+                // Simple parser for demonstration
+                const lines = code.split('\n').filter(line => line.trim());
+                const ast = {
+                    type: 'app',
+                    children: [],
+                    styles: {}
+                };
+
+                let currentBlock = ast;
+                const stack = [ast];
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    
+                    if (trimmed.startsWith('app')) {
+                        ast.name = trimmed.match(/app "([^"]+)"/)?.[1] || 'WebML App';
+                    } else if (trimmed.startsWith('styles')) {
+                        currentBlock.styles = this.parseStyles(trimmed);
+                    } else if (trimmed.includes('{')) {
+                        const element = this.parseElement(trimmed);
+                        currentBlock.children.push(element);
+                        stack.push(element);
+                        currentBlock = element;
+                    } else if (trimmed === '}') {
+                        stack.pop();
+                        currentBlock = stack[stack.length - 1];
+                    } else if (trimmed && !trimmed.startsWith('//')) {
+                        const element = this.parseElement(trimmed);
+                        currentBlock.children.push(element);
+                    }
+                }
+
+                return ast;
+            }
+
+            parseElement(line) {
+                // Simple element parser
+                if (line.includes('"')) {
+                    const match = line.match(/(\w+)\s+"([^"]+)"/);
+                    if (match) {
+                        return {
+                            type: match[1],
+                            content: match[2],
+                            children: [],
+                            styles: {}
+                        };
+                    }
+                }
+                
+                const type = line.split(' ')[0];
+                return {
+                    type: type,
+                    children: [],
+                    styles: {}
+                };
+            }
+
+            parseStyles(line) {
+                const styles = {};
+                // Simple style extraction
+                const styleMatch = line.match(/styles\s*{([^}]*)}/);
+                if (styleMatch) {
+                    const styleLines = styleMatch[1].split(';').filter(s => s.trim());
+                    for (const styleLine of styleLines) {
+                        const [key, value] = styleLine.split(':').map(s => s.trim());
+                        if (key && value) {
+                            styles[key] = value;
+                        }
+                    }
+                }
+                return styles;
+            }
+
+            generateHTML(ast) {
+                let html = '';
+                
+                const buildHTML = (node, depth = 0) => {
+                    const indent = '  '.repeat(depth);
+                    
+                    switch (node.type) {
+                        case 'app':
+                            html += `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>${node.name}</title>\n</head>\n<body>\n`;
+                            node.children.forEach(child => buildHTML(child, 1));
+                            html += `</body>\n</html>`;
+                            break;
+                            
+                        case 'header':
+                            html += `${indent}<header class="webml-header">\n`;
+                            node.children.forEach(child => buildHTML(child, depth + 1));
+                            html += `${indent}</header>\n`;
+                            break;
+                            
+                        case 'h1':
+                        case 'h2':
+                        case 'h3':
+                        case 'h4':
+                        case 'h5':
+                        case 'h6':
+                            html += `${indent}<${node.type}>${node.content || ''}</${node.type}>\n`;
+                            break;
+                            
+                        case 'p':
+                            html += `${indent}<p>${node.content || ''}</p>\n`;
+                            break;
+                            
+                        case 'button':
+                            html += `${indent}<button class="webml-button">${node.content || 'Button'}</button>\n`;
+                            break;
+                            
+                        case 'card':
+                            html += `${indent}<div class="webml-card">\n`;
+                            node.children.forEach(child => buildHTML(child, depth + 1));
+                            html += `${indent}</div>\n`;
+                            break;
+                            
+                        default:
+                            if (node.content) {
+                                html += `${indent}<div class="webml-${node.type}">${node.content}</div>\n`;
+                            } else if (node.children.length > 0) {
+                                html += `${indent}<div class="webml-${node.type}">\n`;
+                                node.children.forEach(child => buildHTML(child, depth + 1));
+                                html += `${indent}</div>\n`;
+                            }
+                    }
+                };
+
+                buildHTML(ast);
+                return html;
+            }
+
+            generateCSS(ast) {
+                let css = `
+                    /* WebML Generated CSS */
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    
+                    body {
+                        font-family: system-ui, -apple-system, sans-serif;
+                        line-height: 1.6;
+                        color: #1e293b;
+                        background: #f8fafc;
+                    }
+                    
+                    .webml-header {
+                        background: #3b82f6;
+                        color: white;
+                        padding: 2rem;
+                        text-align: center;
+                    }
+                    
+                    .webml-card {
+                        background: white;
+                        border-radius: 0.5rem;
+                        padding: 1.5rem;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                        margin: 1rem;
+                    }
+                    
+                    .webml-button {
+                        background: #3b82f6;
+                        color: white;
+                        border: none;
+                        padding: 0.5rem 1rem;
+                        border-radius: 0.375rem;
+                        cursor: pointer;
+                        font-weight: 500;
+                        transition: background 0.2s;
+                    }
+                    
+                    .webml-button:hover {
+                        background: #2563eb;
+                    }
+                    
+                    .webml-grid {
+                        display: grid;
+                        gap: 1rem;
+                    }
+                `;
+                return css;
+            }
+        }
+
+        // App State
+        const state = {
+            currentCode: '',
+            compiler: new WebMLCompiler(),
+            examples: [
+                {
+                    title: "Simple Website",
+                    description: "Basic website with header and content",
+                    code: `app "My Website" {
+  body {
+    header {
+      h1 "Welcome to WebML"
+      p "Building better websites, faster"
+    }
+    
+    main {
+      card {
+        h2 "Why WebML?"
+        p "WebML combines HTML and CSS into a clean, intuitive syntax."
+        button "Get Started"
+      }
+    }
+  }
+}`
+                },
+                {
+                    title: "Dashboard Layout",
+                    description: "Modern dashboard with cards and grid",
+                    code: `app "Dashboard" {
+  styles {
+    primary-color: #8b5cf6
+    background: #0f172a
+  }
+  
+  body {
+    layout: flex column
+    background: background
+    color: white
+    padding: 2rem
+    
+    header {
+      h1 "Analytics Dashboard"
+      p "Real-time data and insights"
+    }
+    
+    grid: 3
+    gap: 1.5rem
+    
+    card {
+      header: "Users"
+      value: "12,458"
+      change: "+12%"
+    }
+    
+    card {
+      header: "Revenue"
+      value: "$45,231"
+      change: "+8%"
+    }
+    
+    card {
+      header: "Conversion"
+      value: "3.2%"
+      change: "+0.4%"
+    }
+  }
+}`
+                },
+                {
+                    title: "Portfolio Page",
+                    description: "Clean portfolio with projects grid",
+                    code: `app "Portfolio" {
+  body {
+    header {
+      type: hero
+      title: "John Doe"
+      subtitle: "Web Developer & Designer"
+      button "View Work"
+    }
+    
+    section "Projects" {
+      grid: 2
+      
+      project {
+        title: "E-Commerce Site"
+        description: "Modern online store"
+        tags: ["React", "Node.js", "MongoDB"]
+      }
+      
+      project {
+        title: "Mobile App"
+        description: "Cross-platform application"
+        tags: ["Flutter", "Firebase"]
+      }
+    }
+  }
+}`
+                }
+            ]
+        };
+
+        // DOM Elements
+        const editor = document.getElementById('webml-editor');
+        const previewFrame = document.getElementById('preview-frame');
+        const examplesPanel = document.getElementById('examples-panel');
+        const examplesList = document.getElementById('examples-list');
+        const compileStatus = document.getElementById('compile-status');
+        const lineCount = document.getElementById('line-count');
+        const toast = document.getElementById('toast');
+
+        // Initialize
+        function init() {
+            loadDefaultCode();
+            setupEditor();
+            loadExamples();
+            runCode();
+        }
+
+        function loadDefaultCode() {
+            const defaultCode = `app "My WebML App" {
+  styles {
+    primary-color: #3b82f6
+    font-family: system-ui, sans-serif
+  }
+  
+  body {
+    layout: flex column center
+    padding: 2rem
+    gap: 2rem
+    min-height: 100vh
+    
+    header {
+      text-align: center
+      
+      h1 "🚀 Welcome to WebML!"
+      p "This is a live preview of your WebML code."
+    }
+    
+    main {
+      layout: grid 2
+      gap: 1.5rem
+      max-width: 800px
+      width: 100%
+      
+      card {
+        padding: 1.5rem
+        border-radius: 0.5rem
+        background: white
+        shadow: medium
+        
+        h2 "Simple Syntax"
+        p "Write less code, build more features."
+        button "Learn More" { variant: primary }
+      }
+      
+      card {
+        padding: 1.5rem
+        border-radius: 0.5rem
+        background: white
+        shadow: medium
+        
+        h2 "Built-in Styling"
+        p "Beautiful designs with minimal effort."
+        button "See Examples" { variant: secondary }
+      }
+    }
+    
+    footer {
+      text-align: center
+      color: #64748b
+      margin-top: 3rem
+    }
+  }
+}`;
+            
+            editor.value = defaultCode;
+            state.currentCode = defaultCode;
+            updateLineCount();
+        }
+
+        function setupEditor() {
+            editor.addEventListener('input', function() {
+                state.currentCode = this.value;
+                updateLineCount();
+                debounce(runCode, 500)();
+            });
+
+            editor.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    
+                    this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 2;
+                }
+            });
+        }
+
+        function updateLineCount() {
+            const lines = editor.value.split('\n');
+            const currentLine = editor.value.substr(0, editor.selectionStart).split('\n').length;
+            const currentCol = editor.selectionStart - editor.value.lastIndexOf('\n', editor.selectionStart - 1);
+            lineCount.textContent = `Line ${currentLine}, Column ${currentCol}`;
+        }
+
+        function loadExamples() {
+            examplesList.innerHTML = '';
+            state.examples.forEach((example, index) => {
+                const div = document.createElement('div');
+                div.className = 'example-item';
+                div.innerHTML = `
+                    <div class="example-title">${example.title}</div>
+                    <div class="example-desc">${example.description}</div>
+                `;
+                div.addEventListener('click', () => loadExample(index));
+                examplesList.appendChild(div);
+            });
+        }
+
+        function loadExample(index) {
+            const example = state.examples[index];
+            editor.value = example.code;
+            state.currentCode = example.code;
+            runCode();
+            hideExamples();
+            showToast(`Loaded example: ${example.title}`);
+        }
+
+        // Core Functions
+        function runCode() {
+            compileStatus.textContent = 'Compiling...';
+            compileStatus.style.color = 'var(--warning)';
+
+            setTimeout(() => {
+                const result = state.compiler.compile(state.currentCode);
+                
+                if (result.error) {
+                    compileStatus.textContent = 'Error';
+                    compileStatus.style.color = 'var(--error)';
+                    showToast(`Compilation error: ${result.error}`, true);
+                } else {
+                    compileStatus.textContent = 'Success';
+                    compileStatus.style.color = 'var(--success)';
+                    
+                    const previewHtml = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>${result.css}</style>
+                        </head>
+                        <body>${result.html}</body>
+                        </html>
+                    `;
+                    
+                    previewFrame.srcdoc = previewHtml;
+                    showToast('Code compiled successfully!');
+                }
+            }, 100);
+        }
+
+        function formatCode() {
+            // Simple formatter - indents braces
+            const lines = state.currentCode.split('\n');
+            let formatted = [];
+            let indentLevel = 0;
+            
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
+                
+                if (trimmed.endsWith('}')) {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                }
+                
+                formatted.push('  '.repeat(indentLevel) + trimmed);
+                
+                if (trimmed.endsWith('{')) {
+                    indentLevel++;
+                }
+            }
+            
+            editor.value = formatted.join('\n');
+            state.currentCode = editor.value;
+            showToast('Code formatted!');
+        }
+
+        function exportCode() {
+            const result = state.compiler.compile(state.currentCode);
+            const blob = new Blob([`${result.html}\n\n<style>\n${result.css}\n</style>`], 
+                { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'webml-export.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Code exported as HTML!');
+        }
+
+        function shareCode() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out my WebML code!',
+                    text: 'I built this with WebML Playground',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(state.currentCode);
+                showToast('Code copied to clipboard!');
+            }
+        }
+
+        function showExamples() {
+            examplesPanel.classList.add('open');
+        }
+
+        function hideExamples() {
+            examplesPanel.classList.remove('open');
+        }
+
+        function showToast(message, isError = false) {
+            toast.textContent = message;
+            toast.className = `toast ${isError ? 'error' : ''} show`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Utility Functions
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
