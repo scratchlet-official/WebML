@@ -55,10 +55,35 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo:hover {
+            opacity: 0.9;
         }
 
         .logo-icon {
             font-size: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
         }
 
         .controls {
@@ -79,6 +104,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
         }
 
         .btn:hover {
@@ -100,6 +126,164 @@
             display: flex;
             flex: 1;
             overflow: hidden;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Home Page */
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem auto;
+            max-width: 1200px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+        }
+
+        /* Tutorial Page */
+        .tutorial-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tutorial-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tutorial-step {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step-content {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .code-block {
+            background: #1a1f36;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+
+        .code-comment {
+            color: #6b7280;
+        }
+
+        .code-keyword {
+            color: #f472b6;
+        }
+
+        .code-string {
+            color: #84cc16;
+        }
+
+        .code-property {
+            color: #60a5fa;
+        }
+
+        .example-preview {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            color: #1e293b;
         }
 
         /* Editor Panel */
@@ -255,6 +439,19 @@
                 flex: none;
                 height: 50%;
             }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav {
+                gap: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -262,84 +459,301 @@
     <div class="app">
         <!-- Header -->
         <header class="header">
-            <div class="logo">
+            <a href="#" class="logo" onclick="showPage('home')">
                 <span class="logo-icon">🚀</span>
                 <span>WebML Playground</span>
-            </div>
+            </a>
+            <nav class="nav">
+                <a href="#" class="nav-link active" onclick="showPage('home')">Home</a>
+                <a href="#" class="nav-link" onclick="showPage('playground')">Playground</a>
+                <a href="#" class="nav-link" onclick="showPage('tutorial')">Tutorial</a>
+            </nav>
             <div class="controls">
-                <button class="btn" onclick="runCode()">
-                    <span>▶️</span> Run
-                </button>
-                <button class="btn btn-secondary" onclick="showExamples()">
-                    <span>📚</span> Examples
-                </button>
-                <button class="btn btn-secondary" onclick="exportCode()">
-                    <span>💾</span> Export
-                </button>
-                <button class="btn btn-secondary" onclick="shareCode()">
-                    <span>🔗</span> Share
+                <button class="btn" onclick="showPage('playground')">
+                    <span>⚡</span> Start Coding
                 </button>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="main">
-            <!-- Editor -->
-            <div class="editor-panel">
-                <div class="panel-header">
-                    <div class="panel-title">WebML Code Editor</div>
-                    <div>
-                        <button class="btn btn-secondary" onclick="formatCode()">
-                            <span>✨</span> Format
+        <!-- Home Page -->
+        <div id="home-page" class="page active">
+            <section class="hero">
+                <h1>Build Better Websites with WebML</h1>
+                <p>WebML combines the power of HTML and CSS into a single, intuitive syntax. Write less code, build more features, and create beautiful websites faster than ever before.</p>
+                <div class="hero-buttons">
+                    <button class="btn" onclick="showPage('playground')">
+                        <span>🚀</span> Start Coding Now
+                    </button>
+                    <button class="btn btn-secondary" onclick="showPage('tutorial')">
+                        <span>📚</span> Learn WebML
+                    </button>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>All-in-One Syntax</h3>
+                    <p>Combine HTML structure and CSS styling in a single, clean syntax. No more switching between files or dealing with complex class names.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Preview</h3>
+                    <p>See your changes in real-time with our live preview. Write code and immediately see the results without any build steps.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛠️</div>
+                    <h3>Modern Features</h3>
+                    <p>Built-in responsive design, CSS Grid, Flexbox, and modern styling patterns. Focus on your content, not on boilerplate.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Component-Based</h3>
+                    <p>Create reusable components with variants and props. Build complex UIs from simple, composable building blocks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Easy to Learn</h3>
+                    <p>Intuitive syntax that's easy to pick up. If you know HTML and CSS, you'll feel right at home with WebML.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Extensible</h3>
+                    <p>Customize everything with themes, components, and plugins. Make WebML work exactly how you want it to.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Playground Page -->
+        <div id="playground-page" class="page">
+            <div class="main">
+                <!-- Editor -->
+                <div class="editor-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">WebML Code Editor</div>
+                        <div>
+                            <button class="btn btn-secondary" onclick="formatCode()">
+                                <span>✨</span> Format
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-container">
+                        <textarea id="webml-editor" spellcheck="false"></textarea>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="preview-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">Live Preview</div>
+                        <div class="status-item">
+                            <span id="compile-status">Ready</span>
+                        </div>
+                    </div>
+                    <iframe id="preview-frame"></iframe>
+                </div>
+
+                <!-- Examples Sidebar -->
+                <div class="examples-panel" id="examples-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">Code Examples</div>
+                        <button class="btn btn-secondary" onclick="hideExamples()">
+                            <span>✕</span>
+                        </button>
+                    </div>
+                    <div class="examples-list" id="examples-list">
+                        <!-- Examples will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <footer class="status-bar">
+                <div class="status-item">
+                    <span>WebML v1.0</span>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-secondary" onclick="showExamples()">
+                        <span>📚</span> Examples
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportCode()">
+                        <span>💾</span> Export
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareCode()">
+                        <span>🔗</span> Share
+                    </button>
+                    <button class="btn" onclick="runCode()">
+                        <span>▶️</span> Run
+                    </button>
+                </div>
+                <div class="status-item">
+                    <span id="line-count">Line 1, Column 1</span>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Tutorial Page -->
+        <div id="tutorial-page" class="page">
+            <div class="tutorial-container">
+                <h1>WebML Tutorial</h1>
+                <p class="hero-subtitle" style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Learn WebML step by step with this comprehensive tutorial
+                </p>
+
+                <div class="tutorial-nav">
+                    <button class="btn btn-secondary" onclick="showTutorialStep(1)">Getting Started</button>
+                    <button class="btn btn-secondary" onclick="showTutorialStep(2)">Basic Syntax</button>
+                    <button class="btn btn-secondary" onclick="showTutorialStep(3)">Styling</button>
+                    <button class="btn btn-secondary" onclick="showTutorialStep(4)">Layouts</button>
+                    <button class="btn btn-secondary" onclick="showTutorialStep(5)">Components</button>
+                </div>
+
+                <!-- Step 1: Getting Started -->
+                <div id="tutorial-step-1" class="tutorial-step">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h2>Getting Started with WebML</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>WebML is designed to be simple and intuitive. Let's start with the basic structure of a WebML document.</p>
+                        
+                        <div class="code-block">
+                            <span class="code-comment">// Every WebML app starts with an app declaration</span><br>
+                            <span class="code-keyword">app</span> <span class="code-string">"My First App"</span> {<br>
+                            &nbsp;&nbsp;<span class="code-comment">// Global styles go here</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">styles</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">primary-color</span>: <span class="code-string">#3b82f6</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">font-family</span>: <span class="code-string">system-ui, sans-serif</span><br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-comment">// The body contains your page content</span><br>
+                            &nbsp;&nbsp;<span class="code-keyword">body</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// Your content goes here</span><br>
+                            &nbsp;&nbsp;}<br>
+                            }
+                        </div>
+
+                        <p><strong>Key Concepts:</strong></p>
+                        <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+                            <li><code>app</code> defines your application</li>
+                            <li><code>styles</code> contains global style definitions</li>
+                            <li><code>body</code> is where your page content lives</li>
+                            <li>Properties use <code>key: value</code> syntax</li>
+                        </ul>
+
+                        <button class="btn" onclick="loadTutorialExample(1)">
+                            <span>🚀</span> Try This Example
                         </button>
                     </div>
                 </div>
-                <div class="editor-container">
-                    <textarea id="webml-editor" spellcheck="false"></textarea>
-                </div>
-            </div>
 
-            <!-- Preview -->
-            <div class="preview-panel">
-                <div class="panel-header">
-                    <div class="panel-title">Live Preview</div>
-                    <div class="status-item">
-                        <span id="compile-status">Ready</span>
+                <!-- Step 2: Basic Syntax -->
+                <div id="tutorial-step-2" class="tutorial-step" style="display: none;">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h2>Basic Elements and Syntax</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>WebML uses a simple, declarative syntax for creating elements. Here are the basic building blocks:</p>
+                        
+                        <div class="code-block">
+                            <span class="code-keyword">app</span> <span class="code-string">"Basic Elements"</span> {<br>
+                            &nbsp;&nbsp;<span class="code-keyword">body</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// Headers</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">h1</span> <span class="code-string">"Main Heading"</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">h2</span> <span class="code-string">"Subheading"</span><br>
+                            <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// Paragraphs and text</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">p</span> <span class="code-string">"This is a paragraph of text that explains something important about your website."</span><br>
+                            <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// Buttons</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">button</span> <span class="code-string">"Click Me"</span><br>
+                            <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// Containers</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">div</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">p</span> <span class="code-string">"Content inside a div"</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;}<br>
+                            }
+                        </div>
+
+                        <p><strong>Element Types:</strong></p>
+                        <ul style="color: var(--text-secondary); margin-left: 1.5rem;">
+                            <li><strong>Text elements:</strong> <code>h1</code>, <code>h2</code>, <code>h3</code>, <code>h4</code>, <code>h5</code>, <code>h6</code>, <code>p</code>, <code>span</code></li>
+                            <li><strong>Interactive elements:</strong> <code>button</code>, <code>input</code>, <code>link</code></li>
+                            <li><strong>Container elements:</strong> <code>div</code>, <code>section</code>, <code>header</code>, <code>footer</code></li>
+                            <li><strong>Layout elements:</strong> <code>grid</code>, <code>flex</code>, <code>card</code></li>
+                        </ul>
+
+                        <button class="btn" onclick="loadTutorialExample(2)">
+                            <span>🚀</span> Try This Example
+                        </button>
                     </div>
                 </div>
-                <iframe id="preview-frame"></iframe>
-            </div>
 
-            <!-- Examples Sidebar -->
-            <div class="examples-panel" id="examples-panel">
-                <div class="panel-header">
-                    <div class="panel-title">Code Examples</div>
-                    <button class="btn btn-secondary" onclick="hideExamples()">
-                        <span>✕</span>
-                    </button>
-                </div>
-                <div class="examples-list" id="examples-list">
-                    <!-- Examples will be loaded here -->
-                </div>
-            </div>
-        </main>
+                <!-- Step 3: Styling -->
+                <div id="tutorial-step-3" class="tutorial-step" style="display: none;">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h2>Styling and Theming</h2>
+                    </div>
+                    <div class="step-content">
+                        <p>WebML makes styling intuitive with built-in properties and theme support.</p>
+                        
+                        <div class="code-block">
+                            <span class="code-keyword">app</span> <span class="code-string">"Styled App"</span> {<br>
+                            &nbsp;&nbsp;<span class="code-keyword">styles</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">primary-color</span>: <span class="code-string">#8b5cf6</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">background</span>: <span class="code-string">#0f172a</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">font-family</span>: <span class="code-string">system-ui, sans-serif</span><br>
+                            &nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="code-keyword">body</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">padding</span>: <span class="code-string">2rem</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">background</span>: <span class="code-string">background</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">color</span>: <span class="code-string">white</span><br>
+                            <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">header</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">text-align</span>: <span class="code-string">center</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">margin-bottom</span>: <span class="code-string">2rem</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">card</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">background</span>: <span class="code-string">white</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">color</span>: <span class="code-string">#1e293b</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">padding</span>: <span class="code-string">1.5rem</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">border-radius</span>: <span class="code-string">0.5rem</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-property">shadow</span>: <span class="code-string">medium</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;}<br>
+                            }
+                        </div>
 
-        <!-- Status Bar -->
-        <footer class="status-bar">
-            <div class="status-item">
-                <span>WebML v1.0</span>
+                        <p><strong>Common Style Properties:</strong></p>
+                        <ul style="color: var(--text-secondary); margin-left: 1.5rem;">
+                            <li><strong>Layout:</strong> <code>padding</code>, <code>margin</code>, <code>width</code>, <code>height</code></li>
+                            <li><strong>Color:</strong> <code>background</code>, <code>color</code>, <code>border-color</code></li>
+                            <li><strong>Typography:</strong> <code>font-family</code>, <code>font-size</code>, <code>text-align</code></li>
+                            <li><strong>Effects:</strong> <code>shadow</code>, <code>border-radius</code>, <code>opacity</code></li>
+                        </ul>
+
+                        <button class="btn" onclick="loadTutorialExample(3)">
+                            <span>🎨</span> Try Styling Example
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Add more tutorial steps as needed -->
+
             </div>
-            <div class="status-item">
-                <span id="line-count">Line 1, Column 1</span>
-            </div>
-        </footer>
+        </div>
 
         <!-- Toast -->
         <div class="toast" id="toast"></div>
     </div>
 
     <script>
-        // WebML Compiler
+        // WebML Compiler (same as before)
         class WebMLCompiler {
             constructor() {
                 this.components = new Map();
@@ -373,13 +787,9 @@
 
             compile(webmlCode) {
                 try {
-                    // Parse WebML code
                     const ast = this.parse(webmlCode);
-                    
-                    // Generate HTML and CSS
                     const html = this.generateHTML(ast);
                     const css = this.generateCSS(ast);
-                    
                     return { html, css, error: null };
                 } catch (error) {
                     return { html: '', css: '', error: error.message };
@@ -387,7 +797,6 @@
             }
 
             parse(code) {
-                // Simple parser for demonstration
                 const lines = code.split('\n').filter(line => line.trim());
                 const ast = {
                     type: 'app',
@@ -423,7 +832,6 @@
             }
 
             parseElement(line) {
-                // Simple element parser
                 if (line.includes('"')) {
                     const match = line.match(/(\w+)\s+"([^"]+)"/);
                     if (match) {
@@ -446,7 +854,6 @@
 
             parseStyles(line) {
                 const styles = {};
-                // Simple style extraction
                 const styleMatch = line.match(/styles\s*{([^}]*)}/);
                 if (styleMatch) {
                     const styleLines = styleMatch[1].split(';').filter(s => s.trim());
@@ -558,11 +965,6 @@
                     .webml-button:hover {
                         background: #2563eb;
                     }
-                    
-                    .webml-grid {
-                        display: grid;
-                        gap: 1rem;
-                    }
                 `;
                 return css;
             }
@@ -635,38 +1037,77 @@
     }
   }
 }`
-                },
-                {
-                    title: "Portfolio Page",
-                    description: "Clean portfolio with projects grid",
-                    code: `app "Portfolio" {
+                }
+            ],
+            tutorialExamples: {
+                1: `app "My First App" {
+  styles {
+    primary-color: #3b82f6
+    font-family: system-ui, sans-serif
+  }
+  
   body {
+    padding: 2rem
+    text-align: center
+    
+    h1 "Hello, WebML!"
+    p "Welcome to your first WebML application."
+    button "Get Started"
+  }
+}`,
+                2: `app "Basic Elements" {
+  body {
+    padding: 2rem
+    
+    h1 "Main Heading"
+    h2 "Subheading"
+    p "This is a paragraph of text that explains something important about your website."
+    
+    button "Primary Button"
+    button "Secondary Button"
+    
+    div {
+      p "Content inside a div container"
+      button "Nested Button"
+    }
+  }
+}`,
+                3: `app "Styled App" {
+  styles {
+    primary-color: #8b5cf6
+    background: #0f172a
+    font-family: system-ui, sans-serif
+  }
+  
+  body {
+    padding: 2rem
+    background: background
+    color: white
+    
     header {
-      type: hero
-      title: "John Doe"
-      subtitle: "Web Developer & Designer"
-      button "View Work"
+      text-align: center
+      margin-bottom: 2rem
+      
+      h1 "Beautiful Styling"
+      p "With WebML, styling is intuitive and powerful"
     }
     
-    section "Projects" {
-      grid: 2
+    card {
+      background: white
+      color: #1e293b
+      padding: 1.5rem
+      border-radius: 0.5rem
+      shadow: medium
+      max-width: 400px
+      margin: 0 auto
       
-      project {
-        title: "E-Commerce Site"
-        description: "Modern online store"
-        tags: ["React", "Node.js", "MongoDB"]
-      }
-      
-      project {
-        title: "Mobile App"
-        description: "Cross-platform application"
-        tags: ["Flutter", "Firebase"]
-      }
+      h2 "Styled Card"
+      p "This card demonstrates WebML's styling capabilities"
+      button "Learn More"
     }
   }
 }`
-                }
-            ]
+            }
         };
 
         // DOM Elements
@@ -678,12 +1119,55 @@
         const lineCount = document.getElementById('line-count');
         const toast = document.getElementById('toast');
 
+        // Page Management
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(`${pageName}-page`).classList.add('active');
+            
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // If showing playground, run code
+            if (pageName === 'playground') {
+                setTimeout(runCode, 100);
+            }
+        }
+
+        function showTutorialStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.tutorial-step').forEach(step => {
+                step.style.display = 'none';
+            });
+            
+            // Show selected step
+            document.getElementById(`tutorial-step-${stepNumber}`).style.display = 'block';
+        }
+
+        function loadTutorialExample(exampleNumber) {
+            showPage('playground');
+            setTimeout(() => {
+                editor.value = state.tutorialExamples[exampleNumber];
+                state.currentCode = editor.value;
+                runCode();
+                showToast(`Loaded tutorial example ${exampleNumber}`);
+            }, 100);
+        }
+
         // Initialize
         function init() {
             loadDefaultCode();
             setupEditor();
             loadExamples();
             runCode();
+            showTutorialStep(1); // Show first tutorial step by default
         }
 
         function loadDefaultCode() {
@@ -830,7 +1314,6 @@
         }
 
         function formatCode() {
-            // Simple formatter - indents braces
             const lines = state.currentCode.split('\n');
             let formatted = [];
             let indentLevel = 0;
